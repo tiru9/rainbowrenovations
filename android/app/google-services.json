@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "45041386145",
+    "firebase_url": "https://rainbowhomerenovations.firebaseio.com",
+    "project_id": "rainbowhomerenovations",
+    "storage_bucket": "rainbowhomerenovations.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45041386145:android:19c06318a5ed94e4f5a6e0",
+        "android_client_info": {
+          "package_name": "com.rhr.rainbowhomerenovations"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "45041386145-029q6l1tornhusd07nqunv67fj1lg3l3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rhr.rainbowhomerenovations",
+            "certificate_hash": "3b5052bd8e1165dc8d016c660e00d4ab52ec5454"
+          }
+        },
+        {
+          "client_id": "45041386145-35t5lt5h9sjl9ml58fj1djtjnk67c9vd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACvParo619AIpebHtnLSPODT7MDEtLylw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "45041386145-35t5lt5h9sjl9ml58fj1djtjnk67c9vd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "45041386145-p070446h69ht753nqjionv6qgl82km3e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rhr.rainbowhomerenovations"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
