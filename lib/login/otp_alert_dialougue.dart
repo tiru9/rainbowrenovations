@@ -88,7 +88,6 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
     }).catchError((e) {
       print('Something went wrong..');
     });
-    
   }
 
   Future<void> _sendCodeToPhoneNumber() async {
