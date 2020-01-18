@@ -22,8 +22,8 @@ class _RainbowLoginCardState extends State<RainbowLoginCard> {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(80),
           topRight: Radius.circular(80),
-          bottomLeft: Radius.circular(80),
-          bottomRight: Radius.circular(80),
+          bottomLeft: Radius.circular(45),
+          bottomRight: Radius.circular(45),
         ),
       ),
       child: Padding(

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:rainbowrenovations/utils/otp_fields.dart';
 
 class OTPAlertWidget extends StatefulWidget {
   String phoneNumber;
@@ -61,8 +61,10 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
         FlatButton(
           child: Text('Verify'),
           onPressed: () {
-            Navigator.pop(context);
-            signIn(currentText, this.verificationId);
+            if (isPhoneExists(currentText)) {
+              Navigator.pop(context);
+              signIn(currentText, this.verificationId);
+            } else {}
           },
         ),
       ],
@@ -116,5 +118,9 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
           print('phone no.......$phoneNumber');
           print('Case ${error.message} is not yet implemented');
         });
+  }
+
+  bool isPhoneExists(String currentText) {
+    return true;
   }
 }
