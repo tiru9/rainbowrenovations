@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:rainbowrenovations/login/login_page.dart';
 
 import 'package:rainbowrenovations/login/rainbow_login.dart';
 
@@ -18,10 +19,10 @@ class _RainbowSplashScreenState extends State<RainbowSplashScreen> {
   @override
   void initState() {
     super.initState();
-   // getCurrentUser();
+    // getCurrentUser();
   }
 
-  void getCurrentUser() async{
+  void getCurrentUser() async {
     FirebaseUser _user = await _firebaseAuth.currentUser();
 
     setState(() {
@@ -30,31 +31,38 @@ class _RainbowSplashScreenState extends State<RainbowSplashScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: user != null ? DashBoard(this.user):Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            //Login Page Header
-            decoration: BoxDecoration(
-              color: new Color(0xff622F74),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple[500],
-                  Colors.indigo[500],
-                  Colors.blue[500],
-                  Colors.green[500],
-                  Colors.yellow[800],
-                  Colors.orange[500],
-                  Colors.red[500]
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
+    return Scaffold(body: user != null ? DashBoard(this.user) : _body());
+  }
+
+  _body() {
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          //fit: StackFit.expand,
+          children: <Widget>[
+            Container(
+              //Login Page Header
+              decoration: BoxDecoration(
+                color: new Color(0xff622F74),
+                gradient: LinearGradient(
+                  stops: [0.1, 0.4, 0.6, 0.9],
+                  colors: [
+                    Colors.yellow,
+                    Colors.red,
+                    Colors.indigo,
+                    Colors.teal
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
               ),
+              //child: RainbowLogin(), //Brings login card on Splash Page.
+              child: LoginPage(),
             ),
-            child: RainbowLogin(), //Brings login card on Splash Page.
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
