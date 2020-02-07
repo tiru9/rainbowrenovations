@@ -9,8 +9,6 @@ class LoginDialog extends StatefulWidget {
   LoginDialog(this.title, this.cText);
 
   @override
-  //State<StatefulWidget> createState() => _LoginDialogState();
-
   State<StatefulWidget> createState() {
     return _LoginDialogState();
   }
@@ -28,7 +26,6 @@ class _LoginDialogState extends State<LoginDialog> {
 
   @override
   Widget build(BuildContext context) {
-    print("returning alert..");
     return ((Platform.isAndroid)
         ? AlertDialog(
             shape: RoundedRectangleBorder(
@@ -42,7 +39,7 @@ class _LoginDialogState extends State<LoginDialog> {
                   text: _cText,
                   style: TextStyle(
                     color: Colors.blue,
-                    fontSize: 17,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -62,8 +59,8 @@ class _LoginDialogState extends State<LoginDialog> {
                 text: TextSpan(
                   text: _cText,
                   style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 17,
+                    color: Colors.blue,
+                    fontSize: 15,
                   ),
                 ),
               ),

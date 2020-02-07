@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'rainbow_splash_screen.dart';
+import 'package:rainbowrenovations/pages/rainbow_splash_screen.dart';
 
 void main() => runApp(MaterialApp(
       title: 'Welcome Rainbow Renovations',

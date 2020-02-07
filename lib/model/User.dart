@@ -17,7 +17,6 @@ class User {
 
   factory User.fromFirestore(DocumentSnapshot doc) {
     Map data = doc.data;
-
     return User(
         providerId: data['providerId'] ?? '',
         uid: data['uid'] ?? '',

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rainbowrenovations/login/otp_alert_dialougue.dart';
+import 'package:rainbowrenovations/pages/otp_alert_receiver.dart';
+
 
 class RainbowEmailOrPhoneWidget extends StatefulWidget {
   @override

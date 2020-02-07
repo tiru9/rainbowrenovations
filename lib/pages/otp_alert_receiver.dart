@@ -61,10 +61,8 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
         FlatButton(
           child: Text('Verify'),
           onPressed: () {
-            if (isPhoneExists(currentText)) {
-              Navigator.pop(context);
-              signIn(currentText, this.verificationId);
-            } else {}
+            Navigator.pop(context);
+            signIn(currentText, this.verificationId);
           },
         ),
       ],
@@ -72,8 +70,6 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
   }
 
   signIn(String smsCode, String verificationId) async {
-    print('smscode......$smsCode');
-    print('verificationId......$verificationId');
     final AuthCredential credential = PhoneAuthProvider.getCredential(
       verificationId: verificationId,
       smsCode: smsCode,
@@ -82,7 +78,6 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
     FirebaseAuth.instance
         .signInWithCredential(credential)
         .then((AuthResult value) async {
-      print('user....');
       if (value.user != null)
         print("Onboard the user..");
       else
@@ -99,7 +94,6 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
 
     final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
       this.verificationId = verId;
-      print('verId .....$verId');
       setState(() {
         this.verificationId = verId;
         this.smsCode = smsCode;
@@ -115,7 +109,6 @@ class _OTPAlertWidgetState extends State<OTPAlertWidget> {
           print('authentication completed........$phoneAuthCredential');
         },
         verificationFailed: (AuthException error) {
-          print('phone no.......$phoneNumber');
           print('Case ${error.message} is not yet implemented');
         });
   }

@@ -52,7 +52,6 @@ class SignupBloc extends Object with Validators implements BaseBloc {
         name.length != 0 &&
         email.length != 0 &&
         mobile.length != 0) {
-      print('Helloooooo');
       return true;
     } else
       return false;

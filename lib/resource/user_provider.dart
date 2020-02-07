@@ -14,8 +14,23 @@ class UserProvider {
     if (docs.length == 0) {
       return false;
     } else {
-      print('has records..');
       return true;
+    }
+  }
+
+  Future<bool> addUser(String mobile, String uid, String name,
+      String lastSigned, String email) async {
+    try {
+      await _firestore.collection('users').document(uid).setData({
+        'email': email,
+        'lastSigned': lastSigned,
+        'name': name,
+        'providerId': '+91'+mobile,
+        'uid': uid
+      });
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

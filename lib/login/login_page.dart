@@ -1,20 +1,23 @@
-import 'dart:io';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:rainbowrenovations/bloc/email_login_bloc.dart';
 import 'package:rainbowrenovations/bloc/email_signup_bloc.dart';
+import 'package:rainbowrenovations/pages/dashboard.dart';
+import 'package:rainbowrenovations/pages/home_page.dart';
 import 'package:rainbowrenovations/service/UserService.dart';
 import 'package:rainbowrenovations/style/theme.dart' as Theme;
 import 'package:rainbowrenovations/utils/bubble_indication_painter.dart';
 import 'package:rainbowrenovations/utils/login_signup_alerts.dart';
+import 'package:rainbowrenovations/utils/otp_fields.dart';
 
-import 'otp_alert_dialougue.dart';
+//import 'otp_alert_dialougue.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({Key key}) : super(key: key);
+  final Widget child;
+  LoginPage({Key key, this.child}) : super(key: key);
 
   @override
   _LoginPageState createState() => new _LoginPageState();
@@ -35,9 +38,16 @@ class _LoginPageState extends State<LoginPage>
   TextEditingController loginEmailController = new TextEditingController();
   TextEditingController loginPasswordController = new TextEditingController();
 
+  bool isSignIn = true;
+  bool isPhoneVerfied = false;
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
   bool _obscureTextSignupConfirm = true;
+
+  String currentText;
+  String phoneNumber;
+  String smsCode;
+  String verificationId;
 
   TextEditingController signupEmailController = new TextEditingController();
   TextEditingController signupNameController = new TextEditingController();
@@ -47,107 +57,114 @@ class _LoginPageState extends State<LoginPage>
       new TextEditingController();
 
   PageController _pageController;
+  var signupBloc;
+  var signinBloc;
 
   Color left = Colors.black;
   Color right = Colors.white;
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      key: _scaffoldKey,
-      child: Center(
-        child: SingleChildScrollView(
-          /* child: NotificationListener<OverscrollIndicatorNotification>(
+    return new Scaffold(
+      body: Container(
+        key: _scaffoldKey,
+        child: Center(
+          child: SingleChildScrollView(
+            /* child: NotificationListener<OverscrollIndicatorNotification>(
             onNotification: (overscroll) {
               overscroll.disallowGlow();
             }, */
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height >= 775.0
-                ? MediaQuery.of(context).size.height
-                : 850.0,
-            decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  stops: [
-                    0.1,
-                    0.4,
-                    0.6,
-                    0.9
-                  ],
-                  colors: [
-                    Colors.teal[50],
-                    Colors.teal[100],
-                    Colors.green[100],
-                    Colors.green[100],
-                  ],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  tileMode: TileMode.clamp),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 50.0),
-                  child: new Image(
-                      width: 250.0,
-                      height: 180.0,
-                      fit: BoxFit.fill,
-                      image: new AssetImage('assets/images/rhr1.png')),
-                ),
-                Text(
-                  "Rainbow Renovations",
-                  style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 25.0,
-                      fontFamily: "WorkSansSemiBold"),
-                ),
-                SizedBox(height: 10),
-                Text("Welcomes you!",
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height >= 775.0
+                  ? MediaQuery.of(context).size.height
+                  : 850.0,
+              decoration: new BoxDecoration(
+                gradient: new LinearGradient(
+                    stops: [
+                      0.1,
+                      0.4,
+                      0.6,
+                      0.9
+                    ],
+                    colors: [
+                      //Colors.grey.shade200,
+                      //Colors.grey.shade200,
+                     // Colors.grey.shade200,
+                     // Colors.grey.shade200,
+                     Color.fromRGBO(209,222,238,1),
+                     Color.fromRGBO(209,222,238,1),
+                     Color.fromRGBO(209,222,238,1),
+                     Color.fromRGBO(209,222,238,1),
+                    ],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    tileMode: TileMode.clamp),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 50.0),
+                    child: new Image(
+                        width: 250.0,
+                        height: 180.0,
+                        fit: BoxFit.fill,
+                        image: new AssetImage('assets/images/rhr1.png')),
+                  ),
+                  Text(
+                    "Rainbow Renovations",
                     style: TextStyle(
                         color: Colors.black87,
-                        fontFamily: "WorkSansSemiBold",
-                        fontSize: 18)),
-                Padding(
-                  padding: EdgeInsets.only(top: 20.0),
-                  child: _buildMenuBar(context),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: PageView(
-                    controller: _pageController,
-                    onPageChanged: (i) {
-                      if (i == 0) {
-                        setState(() {
-                          right = Colors.white;
-                          left = Colors.black;
-                        });
-                      } else if (i == 1) {
-                        setState(() {
-                          right = Colors.black;
-                          left = Colors.white;
-                        });
-                      }
-                    },
-                    children: <Widget>[
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignIn(context),
-                      ),
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignUp(context),
-                      ),
-                    ],
+                        fontSize: 25.0,
+                        fontFamily: "WorkSansSemiBold"),
                   ),
-                ),
-              ],
+                  SizedBox(height: 10),
+                  Text("Welcomes you!",
+                      style: TextStyle(
+                          color: Colors.black87,
+                          fontFamily: "WorkSansSemiBold",
+                          fontSize: 18)),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: _buildMenuBar(context),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: PageView(
+                      controller: _pageController,
+                      onPageChanged: (i) {
+                        if (i == 0) {
+                          setState(() {
+                            right = Colors.white;
+                            left = Colors.black;
+                          });
+                        } else if (i == 1) {
+                          setState(() {
+                            right = Colors.black;
+                            left = Colors.white;
+                          });
+                        }
+                      },
+                      children: <Widget>[
+                        new ConstrainedBox(
+                          constraints: const BoxConstraints.expand(),
+                          child: _buildSignIn(context),
+                        ),
+                        new ConstrainedBox(
+                          constraints: const BoxConstraints.expand(),
+                          child: _buildSignUp(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
-      //),
     );
   }
 
@@ -200,7 +217,8 @@ class _LoginPageState extends State<LoginPage>
           bottomLeft: Radius.circular(60),
           bottomRight: Radius.circular(60),
         ),
-        color: Colors.grey.shade200,
+       //color: Colors.grey.shade200,
+      color: Color.fromRGBO(230,233,245,1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.180),
@@ -255,7 +273,7 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Widget _buildSignIn(BuildContext context) {
-    final bloc = SignInBloc();
+    signinBloc = SignInBloc();
     return Container(
       padding: EdgeInsets.only(top: 50.0),
       child: Column(
@@ -272,17 +290,18 @@ class _LoginPageState extends State<LoginPage>
                     bottomLeft: Radius.circular(60),
                     bottomRight: Radius.circular(60),
                   ),
-                  color: Colors.grey.shade200,
+                 // color: Colors.grey.shade200,
+                 color: Color.fromRGBO(230,233,245,1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.180),
                       offset: Offset(15, 15),
-                      blurRadius: 10,
+                      blurRadius: 15,
                     ),
                     BoxShadow(
                       color: Colors.white,
-                      offset: Offset(-12, -12),
-                      blurRadius: 10,
+                      offset: Offset(-10, -10),
+                      blurRadius: 3,
                     ),
                   ],
                 ),
@@ -294,7 +313,7 @@ class _LoginPageState extends State<LoginPage>
                         padding:
                             EdgeInsets.only(top: 20.0, left: 25.0, right: 25.0),
                         child: StreamBuilder<String>(
-                          stream: bloc.mobile,
+                          stream: signinBloc.mobile,
                           initialData: "",
                           builder: (context, snapshot) => TextField(
                             focusNode: myFocusNodeEmailLogin,
@@ -304,7 +323,7 @@ class _LoginPageState extends State<LoginPage>
                             inputFormatters: <TextInputFormatter>[
                               WhitelistingTextInputFormatter.digitsOnly
                             ],
-                            onChanged: bloc.mobileChanged,
+                            onChanged: signinBloc.mobileChanged,
                             style: TextStyle(
                                 fontFamily: "WorkSansSemiBold",
                                 fontSize: 16.0,
@@ -346,7 +365,7 @@ class _LoginPageState extends State<LoginPage>
                               tileMode: TileMode.clamp),
                         ),
                         child: StreamBuilder<bool>(
-                          stream: bloc.loginCheck,
+                          stream: signinBloc.loginCheck,
                           builder: (context, snapshot) => MaterialButton(
                             highlightColor: Colors.transparent,
                             splashColor: Theme.Colors.loginGradientEnd,
@@ -390,12 +409,11 @@ class _LoginPageState extends State<LoginPage>
           ),
         ],
       ),
-      // ),
     );
   }
 
   Widget _buildSignUp(BuildContext context) {
-    var bloc = new SignupBloc();
+    signupBloc = new SignupBloc();
     return Container(
       padding: EdgeInsets.only(top: 50.0),
       child: Column(
@@ -412,7 +430,8 @@ class _LoginPageState extends State<LoginPage>
                     bottomLeft: Radius.circular(60),
                     bottomRight: Radius.circular(60),
                   ),
-                  color: Colors.grey.shade200,
+                  //color: Colors.grey.shade200,
+                  color: Color.fromRGBO(223,233,245,1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.180),
@@ -435,12 +454,12 @@ class _LoginPageState extends State<LoginPage>
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 10.0, left: 25.0, right: 25.0),
                         child: StreamBuilder<String>(
-                          stream: bloc.name,
+                          stream: signupBloc.name,
                           builder: (context, snapshot) => TextField(
                             focusNode: myFocusNodeName,
-                            onChanged: bloc.nameChanged,
+                            onChanged: signupBloc.nameChanged,
                             maxLength: 25,
-                            //controller: signupNameController,
+                            controller: signupNameController,
                             keyboardType: TextInputType.text,
                             textCapitalization: TextCapitalization.words,
                             style: TextStyle(
@@ -472,7 +491,7 @@ class _LoginPageState extends State<LoginPage>
                         padding:
                             EdgeInsets.only(top: 20.0, left: 25.0, right: 25.0),
                         child: StreamBuilder<String>(
-                          stream: bloc.mobileSignup,
+                          stream: signupBloc.mobileSignup,
                           initialData: "",
                           builder: (context, snapshot) => TextField(
                             focusNode: myFocusNodeEmailLogin,
@@ -482,7 +501,7 @@ class _LoginPageState extends State<LoginPage>
                             inputFormatters: <TextInputFormatter>[
                               WhitelistingTextInputFormatter.digitsOnly
                             ],
-                            onChanged: bloc.mobileSignupChanged,
+                            onChanged: signupBloc.mobileSignupChanged,
                             style: TextStyle(
                                 fontFamily: "WorkSansSemiBold",
                                 fontSize: 16.0,
@@ -513,12 +532,12 @@ class _LoginPageState extends State<LoginPage>
                         padding: EdgeInsets.only(
                             top: 20.0, bottom: 10.0, left: 25.0, right: 25.0),
                         child: StreamBuilder<String>(
-                          stream: bloc.emailSignup,
+                          stream: signupBloc.emailSignup,
                           builder: (context, snapshot) => TextField(
                             focusNode: myFocusNodeEmail,
-                            //controller: signupEmailController,
+                            controller: signupEmailController,
                             keyboardType: TextInputType.emailAddress,
-                            onChanged: bloc.emailSignupChanged,
+                            onChanged: signupBloc.emailSignupChanged,
                             style: TextStyle(
                                 fontFamily: "WorkSansSemiBold",
                                 fontSize: 16.0,
@@ -558,7 +577,7 @@ class _LoginPageState extends State<LoginPage>
                               tileMode: TileMode.clamp),
                         ),
                         child: StreamBuilder<bool>(
-                          stream: bloc.signUpCheck,
+                          stream: signupBloc.signUpCheck,
                           builder: (context, snapshot) => MaterialButton(
                             highlightColor: Colors.transparent,
                             splashColor: Theme.Colors.loginGradientEnd,
@@ -576,13 +595,12 @@ class _LoginPageState extends State<LoginPage>
                                     fontFamily: "WorkSansBold"),
                               ),
                             ),
-                            onPressed: () => ((!snapshot.hasError) &&
-                                    snapshot.hasData)
-                                ? validateUser(
-                                    false) //otpAlert(signupMobileController.text)
-                                : null,
+                            onPressed: () =>
+                                ((!snapshot.hasError) && snapshot.hasData)
+                                    ? validateUser(false)
+                                    : null,
                           ),
-                        ), //showInSnackBar("SignUp button pressed")),
+                        ),
                       ),
                     ],
                   ),
@@ -596,11 +614,13 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _onSignInButtonPress() {
+    isSignIn = true;
     _pageController.animateToPage(0,
         duration: Duration(milliseconds: 50), curve: Curves.decelerate);
   }
 
   void _onSignUpButtonPress() {
+    isSignIn = false;
     _pageController?.animateToPage(1,
         duration: Duration(milliseconds: 50), curve: Curves.decelerate);
   }
@@ -623,14 +643,31 @@ class _LoginPageState extends State<LoginPage>
     });
   }
 
-  Future<void> otpAlert(String mobile) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return OTPAlertWidget(mobile);
-      },
-    );
+  Future<void> _sendCodeToPhoneNumber(String mobile) async {
+    print(mobile);
+    final PhoneCodeAutoRetrievalTimeout autoRetrive = (String verId) {
+      this.verificationId = verId;
+    };
+
+    final PhoneCodeSent smsCodeSent = (String verId, [int forceCodeResend]) {
+      this.verificationId = verId;
+      setState(() {
+        this.verificationId = verId;
+        this.smsCode = smsCode;
+      });
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        codeAutoRetrievalTimeout: autoRetrive,
+        codeSent: smsCodeSent,
+        phoneNumber: "+91" + mobile,
+        timeout: const Duration(seconds: 10),
+        verificationCompleted: (AuthCredential phoneAuthCredential) {
+          print('authentication completed........$phoneAuthCredential');
+        },
+        verificationFailed: (AuthException error) {
+          print('Case ${error.message} is not yet implemented');
+        });
   }
 
   Future<void> validateUser(isSignIn) async {
@@ -640,7 +677,13 @@ class _LoginPageState extends State<LoginPage>
 
     if (isUserExists) {
       if (isSignIn) {
-        otpAlert(mobile);
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return _otpAlert(mobile, isSignIn);
+          },
+        );
       } else {
         return showDialog<void>(
           context: context,
@@ -652,9 +695,15 @@ class _LoginPageState extends State<LoginPage>
         );
       }
     } else {
-      if (!isSignIn)
-        otpAlert(mobile);
-      else {
+      if (!isSignIn) {
+        return showDialog<void>(
+          context: context,
+          barrierDismissible: false, // user must tap button!
+          builder: (BuildContext context) {
+            return _otpAlert(mobile, isSignIn);
+          },
+        );
+      } else {
         return showDialog<void>(
           context: context,
           barrierDismissible: false, // user must tap button!
@@ -665,5 +714,90 @@ class _LoginPageState extends State<LoginPage>
         );
       }
     }
+  }
+
+  signIn(String smsCode, String verificationId) async {
+    final AuthCredential credential = PhoneAuthProvider.getCredential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+
+    await FirebaseAuth.instance
+        .signInWithCredential(credential)
+        .then((AuthResult value) async {
+      if (value.user != null) {
+        var _oAuthuser = value.user;
+        this.isPhoneVerfied = true;
+        print(signupBloc.name);
+        var route = new MaterialPageRoute(
+          builder: (BuildContext context) => new HomePage(
+              userName: signupNameController.text,
+              userMobile: signupMobileController.text,
+              userEmail: signupEmailController.text),
+        );
+        Navigator.of(context).push(route);
+        if (isSignIn)
+          print("Onboard the user..");
+        else {
+          print("Onboard the user & save sign up data");
+          bool isUserAdded = await UserService().addUser(
+              signupMobileController.text,
+              _oAuthuser.uid,
+              signupNameController.text,
+              DateTime.now().toString(),
+              signupEmailController.text);
+        }
+      } else
+        print('Error validating OTP, try again..');
+    }).catchError((e) {
+      print('Something went wrong..');
+    });
+  }
+
+  _otpAlert(String mobile, isSignIn) {
+    _sendCodeToPhoneNumber(mobile);
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      elevation: 100.0,
+      backgroundColor: Colors.white,
+      title: Text('OTP verification!'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text('Please enter the OTP'),
+            SizedBox(
+              height: 20,
+            ),
+            PinCodeTextField(
+              length: 6,
+              obsecureText: false,
+              textInputType: TextInputType.numberWithOptions(),
+              animationType: AnimationType.fade,
+              shape: PinCodeFieldShape.box,
+              animationDuration: Duration(milliseconds: 300),
+              borderRadius: BorderRadius.circular(5),
+              fieldHeight: 50,
+              fieldWidth: 40,
+              onChanged: (value) {
+                setState(() {
+                  currentText = value;
+                });
+              },
+            )
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Verify'),
+          onPressed: () {
+            Navigator.pop(context);
+            signIn(currentText, this.verificationId);
+          },
+        ),
+      ],
+    );
   }
 }
